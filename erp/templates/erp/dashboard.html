@@ -1,0 +1,91 @@
+{% extends 'erp/base.html' %}
+
+{% block title %}Dashboard - Simple ERP{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary mb-3">
+            <div class="card-header">Total Products</div>
+            <div class="card-body">
+                <h5 class="card-title">{{ total_products }}</h5>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-success mb-3">
+            <div class="card-header">Total Customers</div>
+            <div class="card-body">
+                <h5 class="card-title">{{ total_customers }}</h5>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-info mb-3">
+            <div class="card-header">Orders Today</div>
+            <div class="card-body">
+                <h5 class="card-title">{{ orders_today }}</h5>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-white bg-danger mb-3">
+            <div class="card-header">Low Stock Items</div>
+            <div class="card-body">
+                <h5 class="card-title">{{ low_stock_count }}</h5>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <div class="col-md-6">
+        <h3>Recent Stock Movements</h3>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Product</th>
+                    <th>Qty</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in recent_logs %}
+                <tr>
+                    <td>{{ log.timestamp|date:"H:i" }}</td>
+                    <td>{{ log.product.name }}</td>
+                    <td class="{% if log.qty < 0 %}text-danger{% else %}text-success{% endif %}">
+                        {{ log.qty }}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="3">No active logs.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="col-md-6">
+        <h3 class="text-danger">Low Stock Alerts</h3>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Stock</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in low_stock_products %}
+                <tr>
+                    <td>{{ product.name }}</td>
+                    <td class="text-danger fw-bold">{{ product.stock_qty }}</td>
+                    <td><a href="{% url 'order-add' %}" class="btn btn-sm btn-outline-primary">Order</a></td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="3">No low stock items.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

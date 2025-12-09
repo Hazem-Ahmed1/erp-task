@@ -1,0 +1,57 @@
+{% extends 'erp/base.html' %}
+
+{% block title %}Order {{ order.order_number }} - Simple ERP{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Order {{ order.order_number }}</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        {% if order.status == 'PENDING' %}
+            <a href="{% url 'order-status-change' order.pk 'confirm' %}" class="btn btn-sm btn-success me-2">Confirm Order</a>
+        {% endif %}
+        {% if order.status != 'CANCELLED' %}
+            <a href="{% url 'order-status-change' order.pk 'cancel' %}" class="btn btn-sm btn-danger">Cancel Order</a>
+        {% endif %}
+        <a href="{% url 'order-list' %}" class="btn btn-sm btn-outline-secondary">Back to List</a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <p><strong>Customer:</strong> {{ order.customer.name }}</p>
+        <p><strong>Date:</strong> {{ order.order_date }}</p>
+        <p><strong>Status:</strong> 
+            <span class="badge {% if order.status == 'CONFIRMED' %}bg-success{% elif order.status == 'CANCELLED' %}bg-danger{% else %}bg-warning{% endif %}">
+                {{ order.get_status_display }}
+            </span>
+        </p>
+        <p><strong>Created By:</strong> {{ order.created_by.username }}</p>
+    </div>
+</div>
+
+<h3>Items</h3>
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Qty</th>
+            <th>Price</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in order.items.all %}
+        <tr>
+            <td>{{ item.product.name }} ({{ item.product.sku }})</td>
+            <td>{{ item.qty }}</td>
+            <td>${{ item.price }}</td>
+            <td>${{ item.total }}</td>
+        </tr>
+        {% endfor %}
+        <tr>
+            <td colspan="3" class="text-end"><strong>Total Amount:</strong></td>
+            <td><strong>${{ order.total_amount }}</strong></td>
+        </tr>
+    </tbody>
+</table>
+{% endblock %}

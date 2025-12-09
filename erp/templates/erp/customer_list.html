@@ -1,0 +1,50 @@
+{% extends 'erp/base.html' %}
+
+{% block title %}Customers - Simple ERP{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+    <h1 class="h2">Customers</h1>
+    <div class="btn-toolbar mb-2 mb-md-0">
+        <a href="{% url 'customer-add' %}" class="btn btn-sm btn-outline-primary">Add Customer</a>
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table class="table table-striped table-sm">
+        <thead>
+            <tr>
+                <th>Code</th>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Balance</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for customer in customers %}
+            <tr>
+                <td>{{ customer.code }}</td>
+                <td>{{ customer.name }}</td>
+                <td>{{ customer.phone }}</td>
+                <td>{{ customer.email }}</td>
+                <td>${{ customer.opening_balance }}</td>
+                <td>
+                    {% if perms.erp.change_customer %}
+                    <a href="{% url 'customer-edit' customer.pk %}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                    {% endif %}
+                    {% if perms.erp.delete_customer %}
+                    <a href="{% url 'customer-delete' customer.pk %}" class="btn btn-sm btn-outline-danger">Delete</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6">No customers found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% include 'erp/pagination.html' %}
+{% endblock %}

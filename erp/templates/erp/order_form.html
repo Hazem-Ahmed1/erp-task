@@ -1,0 +1,48 @@
+{% extends 'erp/base.html' %}
+
+{% block title %}New Order - Simple ERP{% endblock %}
+
+{% block content %}
+<h2>Create New Sales Order</h2>
+<form method="post">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-md-6">
+            {{ form.as_p }}
+        </div>
+    </div>
+    
+    <h3>Order Items</h3>
+    {{ formset.management_form }}
+    <table class="table table-bordered" id="order-items-table">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Delete?</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for form in formset %}
+            <tr>
+                <td>{{ form.product }} {{ form.id }}</td>
+                <td>{{ form.qty }}</td>
+                <td>{{ form.DELETE }}</td> 
+                {% if form.errors %}
+                <tr><td colspan="3" class="text-danger">{{ form.errors }}</td></tr>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    <button type="submit" class="btn btn-primary">Create Order</button>
+    <a href="{% url 'order-list' %}" class="btn btn-secondary">Cancel</a>
+</form>
+
+<script>
+    // Simple JS could go here to add dynamic rows if using a fancier frontend approach or `jquery.formset.js`
+    // For "Simplified ERP" and "Option A", standard Django inlineformset rendered once (or with 'extra' rows) matches requirements.
+    // The view sets extra=1.
+</script>
+{% endblock %}
